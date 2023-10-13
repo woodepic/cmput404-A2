@@ -50,7 +50,6 @@ class HTTPClient(object):
 
         return host, port, path
 
-
     #done
     def connect(self, host, port):
         print(f"Connecting to: Host: {host} Port: {port}")
