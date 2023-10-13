@@ -207,7 +207,7 @@ class TestHTTPClient(unittest.TestCase):
         
         
     # consider disabling this test until everything else works
-    @unittest.skip('Temporary disable')
+    # @unittest.skip('Temporary disable')
     def testInternetGets(self):
         '''Test HTTP Get in the wild, these webservers are far less
            forgiving'''

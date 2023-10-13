@@ -21,7 +21,7 @@
 #A good commands are:
 # python3 httpclient.py GET http://httpbin.org/get
 # python3 httpclient.py GET http://google.com/hello
-# python3 httpclient.py POST http://httpbin.org/put
+# python3 httpclient.py POST http://httpbin.org/post
 
 
 import sys
@@ -94,7 +94,7 @@ class HTTPClient(object):
         self.connect(host, port)
 
         request = f"GET {path} HTTP/1.1\r\nHost: {host}\r\nConnection: close\r\n\r\n"
-        print(f"Request: {repr(request)}")
+        # print(f"Request: {repr(request)}") #for debugging
         self.sendall(request)
 
         response = self.recvall(self.socket)
@@ -108,6 +108,21 @@ class HTTPClient(object):
     def POST(self, url, args=None):
         code = 500
         body = ""
+
+        host, port, path = self.get_host_port_path(url)
+        self.connect(host, port)
+
+        content = ""
+        #args = {"param_name": "hello"} #for testing only
+        if args: content = urllib.parse.urlencode(args)
+
+        request = f"POST {path} HTTP/1.1\r\nHost: {host}\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: {len(content)}\r\nConnection: close\r\n\r\n{content}"
+        self.sendall(request)
+
+        response = self.recvall(self.socket)
+        code, body, headers = self.get_code_body_headers(response)
+
+        print(response)
         return HTTPResponse(code, body)
 
     def command(self, url, command="GET", args=None):
@@ -119,6 +134,7 @@ class HTTPClient(object):
 if __name__ == "__main__":
     client = HTTPClient()
     command = "GET"
+    # print(f"Args: {sys.argv}")
     if (len(sys.argv) <= 1):
         print("opt1")
         help()
