@@ -23,6 +23,10 @@
 # python3 httpclient.py GET http://google.com/hello
 # python3 httpclient.py POST http://httpbin.org/post
 
+#references:
+#Used chat gpt for citations and socket/urllib usage examples
+#Used a couple other examples online for syntax
+
 
 import sys
 import socket
@@ -50,7 +54,6 @@ class HTTPClient(object):
 
         return host, port, path
 
-    #done
     def connect(self, host, port):
         print(f"Connecting to: Host: {host} Port: {port}")
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -66,16 +69,13 @@ class HTTPClient(object):
 
         return code, body, headers
     
-    #done
     def sendall(self, data):
         self.socket.sendall(data.encode('utf-8'))
         
-    #done
     def close(self):
         self.socket.close()
 
     # read everything from the socket
-    #done
     def recvall(self, sock):
         buffer = bytearray()
         done = False
@@ -112,8 +112,8 @@ class HTTPClient(object):
         host, port, path = self.get_host_port_path(url)
         self.connect(host, port)
 
-        content = ""
         #args = {"param_name": "hello"} #for testing only
+        content = ""
         if args: content = urllib.parse.urlencode(args)
 
         request = f"POST {path} HTTP/1.1\r\nHost: {host}\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: {len(content)}\r\nConnection: close\r\n\r\n{content}"
@@ -121,8 +121,9 @@ class HTTPClient(object):
 
         response = self.recvall(self.socket)
         code, body, headers = self.get_code_body_headers(response)
+        print(f"Response: {response}")
+        self.close()
 
-        print(response)
         return HTTPResponse(code, body)
 
     def command(self, url, command="GET", args=None):
@@ -134,7 +135,6 @@ class HTTPClient(object):
 if __name__ == "__main__":
     client = HTTPClient()
     command = "GET"
-    # print(f"Args: {sys.argv}")
     if (len(sys.argv) <= 1):
         print("opt1")
         help()
