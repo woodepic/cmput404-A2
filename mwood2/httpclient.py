@@ -21,6 +21,7 @@
 #A good commands are:
 # python3 httpclient.py GET http://httpbin.org/get
 # python3 httpclient.py GET http://google.com/hello
+# python3 httpclient.py POST http://httpbin.org/put
 
 
 import sys
@@ -57,14 +58,14 @@ class HTTPClient(object):
         self.socket.connect((host, port))
         return None
 
-    def get_code(self, data):
-        return None
+    def get_code_body_headers(self, data):
+        headers = data.split("\r\n\r\n")[0] #the first paragraph
+        body = data.split("\r\n\r\n")[1] #the second paragraph
 
-    def get_headers(self,data):
-        return None
+        response_code_line = headers.split("\r\n")[0] #HTTP/1.1 200 OK
+        code = int(response_code_line.split()[1]) #200
 
-    def get_body(self, data):
-        return None
+        return code, body, headers
     
     #done
     def sendall(self, data):
@@ -99,6 +100,8 @@ class HTTPClient(object):
 
         response = self.recvall(self.socket)
         print(f"Response: {response}")
+
+        code, body, headers = self.get_code_body_headers(response)
 
         self.close()
         return HTTPResponse(code, body)
